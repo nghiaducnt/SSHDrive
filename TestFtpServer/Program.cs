@@ -34,6 +34,8 @@ namespace TestFtpServer
 
             // Use the .NET file system
             var fsProvider = new DotNetFileSystemProvider(Path.Combine(Path.GetTempPath(), "TestFtpServer"));
+            Console.WriteLine(Path.Combine(Path.GetTempPath(), "TestFtpServer").ToString());
+            Console.WriteLine(fsProvider.ToString());
 
             // Use all commands from the FtpServer assembly and the one(s) from the AuthTls assembly
             var commandFactory = new AssemblyFtpCommandHandlerFactory(typeof(FtpServer).Assembly, typeof(AuthTlsCommandHandler).Assembly);
