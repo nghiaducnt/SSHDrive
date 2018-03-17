@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubarDev.FtpServer.FileSystem", "FubarDev.FtpServer.FileSystem\FubarDev.FtpServer.FileSystem.csproj", "{6DA350B9-3B5A-49E3-BBCC-CECC140CEA6B}"
 EndProject
@@ -29,6 +29,8 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubarDev.FtpServer.AuthTls", "FubarDev.FtpServer.AuthTls\FubarDev.FtpServer.AuthTls.csproj", "{A5C36C6D-BE99-44C5-870A-23FD6B76E839}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubarDev.FtpServer.FileSystem.OneDrive", "FubarDev.FtpServer.FileSystem.OneDrive\FubarDev.FtpServer.FileSystem.OneDrive.csproj", "{7BAF7F0F-DA61-4448-ABFD-3348B264189D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavinciInc.FtpServer.FileSystem.SSH", "DavinciInc.FtpServer.FileSystem.SSH\DavinciInc.FtpServer.FileSystem.SSH.csproj", "{996A6492-9CF0-4C26-997A-FBEEC550983E}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -72,6 +74,10 @@ Global
 		{7BAF7F0F-DA61-4448-ABFD-3348B264189D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BAF7F0F-DA61-4448-ABFD-3348B264189D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BAF7F0F-DA61-4448-ABFD-3348B264189D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
