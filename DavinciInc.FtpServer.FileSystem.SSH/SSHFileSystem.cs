@@ -17,7 +17,6 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
     public class SSHFileSystem : IUnixFileSystem
     {
         public static readonly int DefaultStreamBufferSize = 4096;
-
         private bool _disposedValue;
 
         private int _streamBufferSize;
