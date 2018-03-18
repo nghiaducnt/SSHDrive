@@ -40,15 +40,16 @@ namespace FubarDev.FtpServer.CommandHandlers
         /// <inheritdoc/>
         public override async Task<FtpResponse> Process(FtpCommand command, CancellationToken cancellationToken)
         {
+            string err_str = "OK";
             await Connection.WriteAsync(new FtpResponse(150, "Opening data connection."), cancellationToken);
             ITcpSocketClient responseSocket;
             try
             {
                 responseSocket = await Connection.CreateResponseSocket();
             }
-            catch (Exception)
+            catch (Exception ex)
             {
-                return new FtpResponse(425, "Can't open data connection.");
+                return new FtpResponse(425, "Can't open data connection:" + ex.ToString());
             }
             try
             {
@@ -164,6 +165,9 @@ namespace FubarDev.FtpServer.CommandHandlers
                         }
                     }
                 }
+            } catch(Exception ex)
+            {
+                err_str = ex.ToString();
             }
             finally
             {
@@ -171,7 +175,7 @@ namespace FubarDev.FtpServer.CommandHandlers
             }
 
             // Use 250 when the connection stays open.
-            return new FtpResponse(250, "Closing data connection.");
+            return new FtpResponse(250, "Closing data connection:" + err_str);
         }
 
         /// <summary>

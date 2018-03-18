@@ -57,55 +57,55 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <inheritdoc/>
         public Task<IReadOnlyList<IUnixFileSystemEntry>> GetEntriesAsync(IUnixDirectoryEntry directoryEntry, CancellationToken cancellationToken)
         {
-            return null;
+            throw new ArgumentException("Please implement this GetEntriesAsync");
         }
 
         /// <inheritdoc/>
         public Task<IUnixFileSystemEntry> GetEntryByNameAsync(IUnixDirectoryEntry directoryEntry, string name, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this GetEntryByNameAsync");
         }
 
         /// <inheritdoc/>
         public Task<IUnixFileSystemEntry> MoveAsync(IUnixDirectoryEntry parent, IUnixFileSystemEntry source, IUnixDirectoryEntry target, string fileName, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this MoveAsync");
         }
 
         /// <inheritdoc/>
         public Task UnlinkAsync(IUnixFileSystemEntry entry, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this UnlinkAsync");
         }
 
         /// <inheritdoc/>
         public Task<IUnixDirectoryEntry> CreateDirectoryAsync(IUnixDirectoryEntry targetDirectory, string directoryName, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this CreateDirectoryAsync");
         }
 
         /// <inheritdoc/>
         public Task<Stream> OpenReadAsync(IUnixFileEntry fileEntry, long startPosition, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this OpenReadAsync");
         }
 
         /// <inheritdoc/>
         public async Task<IBackgroundTransfer> AppendAsync(IUnixFileEntry fileEntry, long? startPosition, Stream data, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this AppendAsync");
         }
 
         /// <inheritdoc/>
         public async Task<IBackgroundTransfer> CreateAsync(IUnixDirectoryEntry targetDirectory, string fileName, Stream data, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this CreateAsync");
         }
 
         /// <inheritdoc/>
         public async Task<IBackgroundTransfer> ReplaceAsync(IUnixFileEntry fileEntry, Stream data, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this function");
+            throw new ArgumentException("Please implement this ReplaceAsync");
         }
 
         /// <summary>
@@ -121,7 +121,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         {
             
             
-             throw new ArgumentException("Please implement this function");
+             throw new ArgumentException("Please implement this SetMacTimeAsync");
             
         }
 
