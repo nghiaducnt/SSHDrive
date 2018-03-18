@@ -30,7 +30,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubarDev.FtpServer.AuthTls"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "FubarDev.FtpServer.FileSystem.OneDrive", "FubarDev.FtpServer.FileSystem.OneDrive\FubarDev.FtpServer.FileSystem.OneDrive.csproj", "{7BAF7F0F-DA61-4448-ABFD-3348B264189D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavinciInc.FtpServer.FileSystem.SSH", "DavinciInc.FtpServer.FileSystem.SSH\DavinciInc.FtpServer.FileSystem.SSH.csproj", "{996A6492-9CF0-4C26-997A-FBEEC550983E}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DavinciInc.FtpServer.FileSystem.SSH", "DavinciInc.FtpServer.FileSystem.SSH\DavinciInc.FtpServer.FileSystem.SSH.csproj", "{EF9297CF-14DA-43E1-ACD8-D346E575A699}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +74,10 @@ Global
 		{7BAF7F0F-DA61-4448-ABFD-3348B264189D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7BAF7F0F-DA61-4448-ABFD-3348B264189D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7BAF7F0F-DA61-4448-ABFD-3348B264189D}.Release|Any CPU.Build.0 = Release|Any CPU
-		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{996A6492-9CF0-4C26-997A-FBEEC550983E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EF9297CF-14DA-43E1-ACD8-D346E575A699}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EF9297CF-14DA-43E1-ACD8-D346E575A699}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EF9297CF-14DA-43E1-ACD8-D346E575A699}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EF9297CF-14DA-43E1-ACD8-D346E575A699}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -31,6 +31,9 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject>TestFtpServer.Program</StartupObject>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="Minimatch, Version=1.1.0.0, Culture=neutral, PublicKeyToken=0cadeb0b849c27c0, processorArchitecture=MSIL">
       <HintPath>..\packages\FubarDev.Minimatch.1.2.0\lib\portable-net45+dnxcore50+win+wpa81+wp80+MonoAndroid10+xamarinios10+MonoTouch10\Minimatch.dll</HintPath>
@@ -78,6 +81,10 @@
     </None>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\DavinciInc.FtpServer.FileSystem.SSH\DavinciInc.FtpServer.FileSystem.SSH.csproj">
+      <Project>{ef9297cf-14da-43e1-acd8-d346e575a699}</Project>
+      <Name>DavinciInc.FtpServer.FileSystem.SSH</Name>
+    </ProjectReference>
     <ProjectReference Include="..\FubarDev.FtpServer.AccountManagement\FubarDev.FtpServer.AccountManagement.csproj">
       <Project>{2530aefe-ce85-444e-9868-58be478aefd1}</Project>
       <Name>FubarDev.FtpServer.AccountManagement</Name>
@@ -89,6 +96,10 @@
     <ProjectReference Include="..\FubarDev.FtpServer.FileSystem.DotNet\FubarDev.FtpServer.FileSystem.DotNet.csproj">
       <Project>{9a83c6f5-378b-48b3-b32a-151db90b390c}</Project>
       <Name>FubarDev.FtpServer.FileSystem.DotNet</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FubarDev.FtpServer.FileSystem.GoogleDrive\FubarDev.FtpServer.FileSystem.GoogleDrive.csproj">
+      <Project>{0336a73c-3f48-493e-9e71-64015dcc146e}</Project>
+      <Name>FubarDev.FtpServer.FileSystem.GoogleDrive</Name>
     </ProjectReference>
     <ProjectReference Include="..\FubarDev.FtpServer.FileSystem\FubarDev.FtpServer.FileSystem.csproj">
       <Project>{6da350b9-3b5a-49e3-bbcc-cecc140cea6b}</Project>

@@ -7,7 +7,7 @@ using System.IO;
 
 namespace DavinciInc.FtpServer.FileSystem.SSH
 {
-    class SSHFileSystemProvider : IFileSystemClassFactory
+    public class SSHFileSystemProvider : IFileSystemClassFactory
     {
         private readonly string _rootPath;
 

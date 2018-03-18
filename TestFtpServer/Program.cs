@@ -1,5 +1,5 @@
 ﻿////#define USE_FTPS_IMPLICIT
-
+///#define SSHDRIVE
 using System;
 using System.IO;
 using System.Security.Cryptography.X509Certificates;
@@ -10,6 +10,8 @@ using FubarDev.FtpServer.AccountManagement;
 using FubarDev.FtpServer.AccountManagement.Anonymous;
 using FubarDev.FtpServer.AuthTls;
 using FubarDev.FtpServer.FileSystem.DotNet;
+using DavinciInc.FtpServer.FileSystem.SSH;
+
 
 using TestFtpServer.Logging;
 
@@ -33,7 +35,11 @@ namespace TestFtpServer
             var membershipProvider = new AnonymousMembershipProvider(new NoValidation());
 
             // Use the .NET file system
+#if SSHDRIVE
             var fsProvider = new DotNetFileSystemProvider(Path.Combine(Path.GetTempPath(), "TestFtpServer"));
+#else
+            var fsProvider = new SSHFileSystemProvider(Path.Combine(Path.GetTempPath(), "TestFtpServer"));
+#endif
             Console.WriteLine(Path.Combine(Path.GetTempPath(), "TestFtpServer").ToString());
             Console.WriteLine(fsProvider.ToString());
 
