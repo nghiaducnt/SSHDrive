@@ -57,7 +57,25 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <inheritdoc/>
         public Task<IReadOnlyList<IUnixFileSystemEntry>> GetEntriesAsync(IUnixDirectoryEntry directoryEntry, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this GetEntriesAsync");
+            var result = new List<IUnixFileSystemEntry>();
+            var searchDirInfo = ((SSHDirectoryEntry)directoryEntry).Info;
+            foreach (var info in searchDirInfo.EnumerateFileSystemInfos())
+            {
+                var dirInfo = info as DirectoryInfo;
+                if (dirInfo != null)
+                {
+                    result.Add(new SSHDirectoryEntry(this, dirInfo, false));
+                }
+                else
+                {
+                    var fileInfo = info as FileInfo;
+                    if (fileInfo != null)
+                    {
+                        result.Add(new SSHFileEntry(this, fileInfo));
+                    }
+                }
+            }
+            return Task.FromResult<IReadOnlyList<IUnixFileSystemEntry>>(result);
         }
 
         /// <inheritdoc/>
