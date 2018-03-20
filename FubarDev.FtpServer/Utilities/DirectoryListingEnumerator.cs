@@ -114,13 +114,21 @@ namespace FubarDev.FtpServer.Utilities
         /// <returns><code>true</code> when there is a value for <see cref="Entry"/> and <see cref="Name"/></returns>
         public bool MoveNext()
         {
-            if (_enumerateDotEntries)
+            try
             {
-                if (_dotEntriesEnumerator.MoveNext())
-                    return true;
-                _enumerateDotEntries = false;
+                if (_enumerateDotEntries)
+                {
+                    if (_dotEntriesEnumerator.MoveNext())
+                        return true;
+                    _enumerateDotEntries = false;
+                }
+                return _entriesEnumerator.MoveNext();
+            } catch(Exception ex)
+            {
+
             }
-            return _entriesEnumerator.MoveNext();
+            return false;
+            
         }
 
         public string GetFullPath(string name)

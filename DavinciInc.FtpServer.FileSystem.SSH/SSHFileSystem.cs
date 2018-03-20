@@ -39,7 +39,10 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <param name="streamBufferSize">Buffer size to be used in async IO methods</param>
         public SSHFileSystem(string rootPath, bool allowNonEmptyDirectoryDelete, int streamBufferSize)
         {
-          
+            FileSystemEntryComparer = StringComparer.OrdinalIgnoreCase;
+            Root = new SSHDirectoryEntry(this, Directory.CreateDirectory(rootPath), true);
+            SupportsNonEmptyDirectoryDelete = allowNonEmptyDirectoryDelete;
+            _streamBufferSize = streamBufferSize;
         }
 
         /// <inheritdoc/>
@@ -58,6 +61,9 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public Task<IReadOnlyList<IUnixFileSystemEntry>> GetEntriesAsync(IUnixDirectoryEntry directoryEntry, CancellationToken cancellationToken)
         {
             var result = new List<IUnixFileSystemEntry>();
+            DirectoryInfo dir = new DirectoryInfo("c:\\");
+            result.Add(new SSHDirectoryEntry(this, dir, false));
+            return Task.FromResult<IReadOnlyList<IUnixFileSystemEntry>>(result);
             var searchDirInfo = ((SSHDirectoryEntry)directoryEntry).Info;
             foreach (var info in searchDirInfo.EnumerateFileSystemInfos())
             {

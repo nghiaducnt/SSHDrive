@@ -129,9 +129,7 @@ namespace FubarDev.FtpServer.CommandHandlers
                                 NoGlobStar = true,
                                 Dot = true,
                             };
-
                             var mm = new Minimatcher(mask, mmOptions);
-
                             var entries = await Data.FileSystem.GetEntriesAsync(currentDirEntry, cancellationToken);
                             var enumerator = new DirectoryListingEnumerator(entries, Data.FileSystem, currentPath, true);
                             while (enumerator.MoveNext())
