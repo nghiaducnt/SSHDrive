@@ -8,6 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Renci.SshNet;
+using DavinciInc.FtpServer.FileSystem.SSH;
 
 namespace SSHDriveApp
 {
@@ -37,10 +38,12 @@ namespace SSHDriveApp
                     SshCommand cmd;
                     client.Connect();
                     cmd = client.RunCommand("echo "  + test_string);
-                    if (cmd.Result == test_string)
+                    if (String.Compare(test_string, 0, cmd.Result, 0, test_string.Length) == 0)
                         MessageBox.Show("Log in successfully\n", "Testing...", MessageBoxButtons.OK, MessageBoxIcon.Information);
                     else
                         MessageBox.Show("Login successfully but could not execute Unix Shell: \n" + cmd.Result, "Testing...", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
+                    //test Regex
+                    SSHCmdProvider sshProvider = new SSHCmdProvider(client);
                     client.Disconnect();
                 }
             }
@@ -48,6 +51,11 @@ namespace SSHDriveApp
             {
                 MessageBox.Show("Login unsuccessfully\n", "Testing...", MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
+        }
+
+        private void btnSave_Click(object sender, EventArgs e)
+        {
+            this.Close();
         }
     }
 }

@@ -90,5 +90,11 @@
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\DavinciInc.FtpServer.FileSystem.SSH\DavinciInc.FtpServer.FileSystem.SSH.csproj">
+      <Project>{ef9297cf-14da-43e1-acd8-d346e575a699}</Project>
+      <Name>DavinciInc.FtpServer.FileSystem.SSH</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -21,5 +21,6 @@ namespace FubarDev.FtpServer.FileSystem
         /// Gets a value indicating whether this directory can be deleted
         /// </summary>
         bool IsDeletable { get; }
+
     }
 }

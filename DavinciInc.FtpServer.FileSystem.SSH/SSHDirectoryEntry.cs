@@ -7,10 +7,12 @@ using System.IO;
 using JetBrains.Annotations;
 using FubarDev.FtpServer.FileSystem;
 using FubarDev.FtpServer.FileSystem.Generic;
+using Renci.SshNet;
+using System.Text.RegularExpressions;
 
 namespace DavinciInc.FtpServer.FileSystem.SSH
 {
-    class SSHDirectoryEntry: IUnixDirectoryEntry
+    public class SSHDirectoryEntry: IUnixDirectoryEntry
     {
         /// <summary>
         /// Initializes a new instance of the <see cref="SSHDirectoryEntry"/> class.
@@ -29,6 +31,96 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             IsRoot = isRoot;
         }
 
+        public SSHDirectoryEntry([NotNull] SSHFileSystem fileSystem, [NotNull] string rootPath, bool isRoot)
+        {
+            FileSystem = fileSystem;
+            LastWriteTime = new DateTimeOffset(Info.LastWriteTime);
+            CreatedTime = new DateTimeOffset(Info.CreationTimeUtc);
+            var accessMode = new GenericAccessMode(true, true, true);
+            Permissions = new GenericUnixPermissions(accessMode, accessMode, accessMode);
+            IsRoot = isRoot;
+        }
+
+        /// <summary>
+        /// Create Directory from Unix'status string
+        /// For example: http://regexstorm.net/tester
+        /// File: 'bin'
+        /// Size: 1228'   Blocks: 24  IO Block: 262144 directory
+        /// Device: 18h/24d Inode: 15089714    Links: 9
+        /// Access: (0700/drwx------)  Uid: (  263/     shs)   Gid: (  100/ unixdweebs)
+        /// Access: 2014-09-21 03:00:45.000000000 -0400
+        /// Modify: 2014-09-15 17:54:41.000000000 -0400
+        /// Change: 2014-09-15 17:54:41.000000000 -0400
+        /// </summary>
+        /// <param name="statString"></param>
+        public SSHDirectoryEntry(string statString)
+        {
+            Match match = Regex.Match(statString, @"File:\s\W([A-Za-z0-9\-\.\\\/\-_]+)\W");
+            
+            IsValid = true;
+            //File field
+            if (match.Success)
+                Name = match.Value;
+            else
+            {
+                Name = "NULL";
+                IsValid = false;
+            }
+                
+            //Size
+            match = Regex.Match(statString, @"Size:\s([0-9]+)");
+            if (match.Success)
+                Size = UInt32.Parse(match.Value);
+            else
+            {
+                Size = 0;
+                IsValid = false;
+            }
+
+            //Check for Directory
+            match = Regex.Match(statString, @"Size:.*Blocks:.*IO.*Block:.*[0-9]+\s+([a-zA-Z]+)");
+            if (match.Success)
+                if (String.Compare(match.Value.ToLower(), 0, "directory", 0, "directory".Length) == 0)
+                {
+                    IsValid = true;
+                }
+                else
+                    IsValid = false;
+            //Access timestamp
+            match = Regex.Match(statString, @"Access:\s+([0-9].*)");
+            if (match.Success)
+            {
+                LastAccessTime = DateTimeOffset.Parse(match.Value);
+            }
+            //Create timestamp
+            match = Regex.Match(statString, @"Change:\s+([0-9].*)");
+            if (match.Success)
+            {
+                CreatedTime = DateTimeOffset.Parse(match.Value);
+            }
+            //Write timestamp
+            match = Regex.Match(statString, @"Modify:\s+([0-9].*)");
+            if (match.Success)
+            {
+                LastWriteTime = DateTimeOffset.Parse(match.Value);
+            }
+            //Owner
+            match = Regex.Match(statString, @"Access:.*Uid:.*[0-9]/\s+(.*)\)\s+Gid");
+            if (match.Success)
+            {
+                Owner = match.Value;
+            }
+            //Owner
+            match = Regex.Match(statString, @"Access:.* Uid:.*Gid:\s +\(\s +[0 - 9] +/\s + (.*)\)");
+            if (match.Success)
+            {
+                Group = match.Value;
+            }
+
+            
+        }
+
+
         /// <summary>
         /// Gets the underlying <see cref="DirectoryInfo"/>
         /// </summary>
@@ -41,10 +133,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public bool IsDeletable => !IsRoot && (FileSystem.SupportsNonEmptyDirectoryDelete || !Info.EnumerateFileSystemInfos().Any());
 
         /// <inheritdoc/>
-        public string Name => Info.Name;
+        public string Name { get; }
 
         /// <inheritdoc/>
         public IUnixPermissions Permissions { get; }
+
+        /// <inheritdoc/>
+        public DateTimeOffset? LastAccessTime { get; }
 
         /// <inheritdoc/>
         public DateTimeOffset? LastWriteTime { get; }
@@ -59,9 +154,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public IUnixFileSystem FileSystem { get; }
 
         /// <inheritdoc/>
-        public string Owner => "owner";
+        public string Owner { get; }
 
         /// <inheritdoc/>
-        public string Group => "group";
+        public string Group { get;  }
+
+        public UInt32 Size { get; }
+
+        public bool IsValid { get;  }
     }
 }
