@@ -43,7 +43,8 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 cmd = _client.RunCommand("cd ~");
                 cmd = _client.RunCommand("pwd");
                 return cmd.Result;
-            } catch(Exception ex)
+            }
+            catch (Exception ex)
             {
                 throw ex;
             }
@@ -60,6 +61,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             {
                 throw ex;
             }
+        }
+
+        public override string ToString()
+        {
+            string ret = "";
+            ret = _currentDir.ToString();
+            return ret;
         }
 
         #endregion

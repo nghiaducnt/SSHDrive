@@ -43,8 +43,20 @@ namespace SSHDriveApp
                     else
                         MessageBox.Show("Login successfully but could not execute Unix Shell: \n" + cmd.Result, "Testing...", MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     //test Regex
-                    SSHCmdProvider sshProvider = new SSHCmdProvider(client);
-                    client.Disconnect();
+                    try
+                    {
+                        SSHCmdProvider sshProvider = new SSHCmdProvider(client);
+                        MessageBox.Show(sshProvider.ToString());
+
+                    } catch (Exception ex)
+                    {
+                        throw ex;
+                    }
+                    finally
+                    {
+                        client.Disconnect();
+                    }
+                    
                 }
             }
             catch (Exception ex)

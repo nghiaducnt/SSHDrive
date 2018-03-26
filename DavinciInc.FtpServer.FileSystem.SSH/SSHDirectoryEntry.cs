@@ -45,7 +45,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// Create Directory from Unix'status string
         /// For example: http://regexstorm.net/tester
         /// File: 'bin'
-        /// Size: 1228'   Blocks: 24  IO Block: 262144 directory
+        /// Size: 1228  Blocks: 24  IO Block: 262144 directory
         /// Device: 18h/24d Inode: 15089714    Links: 9
         /// Access: (0700/drwx------)  Uid: (  263/     shs)   Gid: (  100/ unixdweebs)
         /// Access: 2014-09-21 03:00:45.000000000 -0400
@@ -60,27 +60,35 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             IsValid = true;
             //File field
             if (match.Success)
-                Name = match.Value;
+                Name = match.Groups[1].Value;
             else
             {
                 Name = "NULL";
                 IsValid = false;
             }
-                
+             
             //Size
             match = Regex.Match(statString, @"Size:\s([0-9]+)");
-            if (match.Success)
-                Size = UInt32.Parse(match.Value);
-            else
+            try
             {
+                if (match.Success)
+                    Size = UInt32.Parse(match.Groups[1].Value);
+                else
+                {
+                    Size = 0;
+                    IsValid = false;
+                }
+            } catch(Exception ex)
+            {
+                Console.WriteLine(ex.ToString());
                 Size = 0;
-                IsValid = false;
             }
+            
 
             //Check for Directory
             match = Regex.Match(statString, @"Size:.*Blocks:.*IO.*Block:.*[0-9]+\s+([a-zA-Z]+)");
             if (match.Success)
-                if (String.Compare(match.Value.ToLower(), 0, "directory", 0, "directory".Length) == 0)
+                if (String.Compare(match.Groups[1].Value.ToLower(), 0, "directory", 0, "directory".Length) == 0)
                 {
                     IsValid = true;
                 }
@@ -90,31 +98,31 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             match = Regex.Match(statString, @"Access:\s+([0-9].*)");
             if (match.Success)
             {
-                LastAccessTime = DateTimeOffset.Parse(match.Value);
+                LastAccessTime = DateTimeOffset.Parse(match.Groups[1].Value);
             }
             //Create timestamp
             match = Regex.Match(statString, @"Change:\s+([0-9].*)");
             if (match.Success)
             {
-                CreatedTime = DateTimeOffset.Parse(match.Value);
+                CreatedTime = DateTimeOffset.Parse(match.Groups[1].Value);
             }
             //Write timestamp
             match = Regex.Match(statString, @"Modify:\s+([0-9].*)");
             if (match.Success)
             {
-                LastWriteTime = DateTimeOffset.Parse(match.Value);
+                LastWriteTime = DateTimeOffset.Parse(match.Groups[1].Value);
             }
             //Owner
             match = Regex.Match(statString, @"Access:.*Uid:.*[0-9]/\s+(.*)\)\s+Gid");
             if (match.Success)
             {
-                Owner = match.Value;
+                Owner = match.Groups[1].Value;
             }
-            //Owner
-            match = Regex.Match(statString, @"Access:.* Uid:.*Gid:\s +\(\s +[0 - 9] +/\s + (.*)\)");
+            //Group
+            match = Regex.Match(statString, @"Access:.*Uid:.*Gid:\s+\(\s+[0-9]+/\s+(.*)\)");
             if (match.Success)
             {
-                Group = match.Value;
+                Group = match.Groups[1].Value;
             }
 
             
@@ -162,5 +170,18 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public UInt32 Size { get; }
 
         public bool IsValid { get;  }
+
+        public override string ToString() {
+            string ret;
+            ret = "Name: " + this.Name;
+            ret += "\nSize: " + this.Size.ToString();
+            ret += this.IsValid == true ? "\nDirectory" : "\nNot valid";
+            ret += "\nCreated: " + this.CreatedTime.ToString();
+            ret += "\nAccess: " + this.LastAccessTime.ToString();
+            ret += "\nModifed: " + this.LastWriteTime.ToString();
+            ret += "\nOwner: " + this.Owner;
+            ret += "\nGroup: " + this.Group;
+            return ret;
+        }
     }
 }
