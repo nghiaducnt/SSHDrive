@@ -14,6 +14,8 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     public class SSHDirectoryEntry: IUnixDirectoryEntry
     {
+        private SSHCmdProvider _sshCmd;
+        private string _path;
         /// <summary>
         /// Initializes a new instance of the <see cref="SSHDirectoryEntry"/> class.
         /// </summary>
@@ -53,11 +55,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// Change: 2014-09-15 17:54:41.000000000 -0400
         /// </summary>
         /// <param name="statString"></param>
-        public SSHDirectoryEntry(string statString)
+        public SSHDirectoryEntry([NotNull] SSHCmdProvider sshCmd, string path)
         {
-            Match match = Regex.Match(statString, @"File:\s\W([A-Za-z0-9\-\.\\\/\-_]+)\W");
-            
+            _sshCmd = sshCmd;
             IsValid = true;
+            _path = path;
+            string statString = _sshCmd.SSHGetStat(path);
+            Match match = Regex.Match(statString, @"File:\s\W([A-Za-z0-9\-\.\\\/\-_]+)\W");
             //File field
             if (match.Success)
                 Name = match.Groups[1].Value;
@@ -113,13 +117,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 LastWriteTime = DateTimeOffset.Parse(match.Groups[1].Value);
             }
             //Owner
-            match = Regex.Match(statString, @"Access:.*Uid:.*[0-9]/\s+(.*)\)\s+Gid");
+            match = Regex.Match(statString, @"Access:.*Uid.*[0-9]/(.*)\)\s+Gid");
             if (match.Success)
             {
                 Owner = match.Groups[1].Value;
             }
             //Group
-            match = Regex.Match(statString, @"Access:.*Uid:.*Gid:\s+\(\s+[0-9]+/\s+(.*)\)");
+            match = Regex.Match(statString, @"Access:.*Uid:.*Gid:\s+\(.*[0-9]+/(.*)\)");
             if (match.Success)
             {
                 Group = match.Groups[1].Value;
@@ -182,6 +186,17 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             ret += "\nOwner: " + this.Owner;
             ret += "\nGroup: " + this.Group;
             return ret;
+        }
+
+        public IEnumerable<IUnixFileSystemEntry> EnumerateSSHFileSystemInfos()
+        {
+            //list all sub directories/files belong to this current directory
+            string strLS = _sshCmd.SSHGetLS(this._path);
+            List<String> matchList = new List<String>();
+            Match match = Regex.Match(strLS, "[^\\s\"']+|\"[^\"]*\"|'[^']*'");
+            //get all files/directories
+           
+            return null;
         }
     }
 }

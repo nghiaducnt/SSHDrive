@@ -10,10 +10,10 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     public class SSHCmdProvider
     {
-        string _rootPath;
-        string _currentPath;
+        public string _rootPath;
+        public string _currentPath;
         SshClient _client;
-        SSHDirectoryEntry _currentDir;
+        public SSHDirectoryEntry _currentDir;
         /// <summary>
         /// 
         /// </summary>
@@ -24,7 +24,8 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             /* get the current home of user */
             _rootPath = SSHGetHome();
             _currentPath = _rootPath;
-            _currentDir = new SSHDirectoryEntry(SSHGetStat(_currentPath));
+            _currentDir = new SSHDirectoryEntry(this, _currentPath);
+            _currentDir.EnumerateSSHFileSystemInfos();
         }
         public SSHCmdProvider([NotNull] SshClient client, [NotNull] string currentPath)
         {
@@ -32,9 +33,14 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             /* get the current home of user */
             _rootPath = SSHGetHome();
             _currentPath = currentPath;
-            _currentDir = new SSHDirectoryEntry(SSHGetStat(_currentPath));
+            _currentDir = new SSHDirectoryEntry(this, _currentPath);
+            _currentDir.EnumerateSSHFileSystemInfos();
         }
         #region Internal command
+        /// <summary>
+        /// Get home directory of current user
+        /// </summary>
+        /// <returns></returns>
         public string SSHGetHome()
         {
             try
@@ -49,12 +55,35 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 throw ex;
             }
         }
+        /// <summary>
+        /// Get status of current path, it can be directory or file
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
         public string SSHGetStat(string path)
         {
             try
             {
                 SshCommand cmd;
                 cmd = _client.RunCommand("stat " + path);
+                return cmd.Result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+        /// <summary>
+        /// List from path
+        /// </summary>
+        /// <param name="path"></param>
+        /// <returns></returns>
+        public string SSHGetLS(string path)
+        {
+            try
+            {
+                SshCommand cmd;
+                cmd = _client.RunCommand("ls " + path);
                 return cmd.Result;
             }
             catch (Exception ex)
