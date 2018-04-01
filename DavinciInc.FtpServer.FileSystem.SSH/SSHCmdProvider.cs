@@ -10,9 +10,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     public class SSHCmdProvider
     {
-        public string _rootPath;
+
         public string _currentPath;
         SshClient _client;
+
+        /// <inheritdoc/>
+        public string _rootPath { get; }
+
         public SSHDirectoryEntry _currentDir;
         /// <summary>
         /// 
@@ -32,7 +36,10 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             _client = client;
             /* get the current home of user */
             _rootPath = SSHGetHome();
-            _currentPath = currentPath;
+            if (currentPath.Length > 0)
+                _currentPath = currentPath;
+            else
+                _rootPath = _rootPath;
             _currentDir = new SSHDirectoryEntry(this, _currentPath);
             _currentDir.EnumerateSSHFileSystemInfos();
         }
@@ -78,12 +85,15 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// </summary>
         /// <param name="path"></param>
         /// <returns></returns>
-        public string SSHGetLS(string path)
+        public string SSHGetLSAll(string path)
         {
             try
             {
                 SshCommand cmd;
-                cmd = _client.RunCommand("ls " + path);
+                if (path != null && path.Length > 0)
+                    cmd = _client.RunCommand("ls -la " + path);
+                else
+                    cmd = _client.RunCommand("ls -la " + this._currentPath);
                 return cmd.Result;
             }
             catch (Exception ex)

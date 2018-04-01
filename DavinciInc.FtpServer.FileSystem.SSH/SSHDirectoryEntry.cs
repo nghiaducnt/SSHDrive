@@ -22,8 +22,9 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <param name="fileSystem">The file system this entry belongs to</param>
         /// <param name="dirInfo">The <see cref="DirectoryInfo"/> to extract the information from</param>
         /// <param name="isRoot">Is this the root directory?</param>
-        public SSHDirectoryEntry([NotNull] SSHFileSystem fileSystem, [NotNull] DirectoryInfo dirInfo, bool isRoot)
+        public SSHDirectoryEntry([NotNull] SSHCmdProvider sshCmd, [NotNull] SSHFileSystem fileSystem, [NotNull] DirectoryInfo dirInfo, bool isRoot)
         {
+            _sshCmd = sshCmd;
             FileSystem = fileSystem;
             Info = dirInfo;
             LastWriteTime = new DateTimeOffset(Info.LastWriteTime);
@@ -33,11 +34,11 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             IsRoot = isRoot;
         }
 
-        public SSHDirectoryEntry([NotNull] SSHFileSystem fileSystem, [NotNull] string rootPath, bool isRoot)
+        public SSHDirectoryEntry([NotNull] SSHCmdProvider sshCmd, [NotNull] SSHFileSystem fileSystem, [NotNull] string rootPath, bool isRoot)
         {
+            _sshCmd = sshCmd;
             FileSystem = fileSystem;
-            LastWriteTime = new DateTimeOffset(Info.LastWriteTime);
-            CreatedTime = new DateTimeOffset(Info.CreationTimeUtc);
+            _path = rootPath.Replace("\n", string.Empty).Replace("\r", string.Empty);
             var accessMode = new GenericAccessMode(true, true, true);
             Permissions = new GenericUnixPermissions(accessMode, accessMode, accessMode);
             IsRoot = isRoot;
@@ -59,7 +60,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         {
             _sshCmd = sshCmd;
             IsValid = true;
-            _path = path;
+            _path = path.Replace("\n", string.Empty).Replace("\r", string.Empty);
             string statString = _sshCmd.SSHGetStat(path);
             Match match = Regex.Match(statString, @"File:\s\W([A-Za-z0-9\-\.\\\/\-_]+)\W");
             //File field
@@ -191,12 +192,34 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public IEnumerable<IUnixFileSystemEntry> EnumerateSSHFileSystemInfos()
         {
             //list all sub directories/files belong to this current directory
-            string strLS = _sshCmd.SSHGetLS(this._path);
+            var ret = new List<IUnixFileSystemEntry>();
+            string strLS = _sshCmd.SSHGetLSAll(this._path);
             List<String> matchList = new List<String>();
-            Match match = Regex.Match(strLS, "[^\\s\"']+|\"[^\"]*\"|'[^']*'");
-            //get all files/directories
+            string[] result = Regex.Split(strLS, "\r\n|\r|\n", RegexOptions.None);
+            for(int i = 1; i < result.Length;i++)
+            {
+                string str = result[i];
+                //check if this is directory or file
+                Match mat;
+                string name = "";
+                mat = Regex.Match(str, @"\S+$");
+                if (mat.Success)
+                    name = mat.Value;
+                mat = Regex.Match(str, "^d");
+                if (mat.Success)
+                {
+                    //this is directory
+                    SSHDirectoryEntry dir = new SSHDirectoryEntry(this._sshCmd, this._path + "/" + name);
+                    ret.Add(dir);
+                } else
+                {
+                    //this is file
+                    SSHFileEntry file = new SSHFileEntry(this._sshCmd, this._path + "/" + name);
+                    ret.Add(file);
+                }
+            }
            
-            return null;
+            return ret;
         }
     }
 }

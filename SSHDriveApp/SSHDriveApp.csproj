@@ -34,6 +34,12 @@
     <Reference Include="Renci.SshNet, Version=2016.1.0.0, Culture=neutral, PublicKeyToken=1cee9f8bde3db106, processorArchitecture=MSIL">
       <HintPath>..\packages\SSH.NET.2016.1.0\lib\net40\Renci.SshNet.dll</HintPath>
     </Reference>
+    <Reference Include="Sockets.Plugin">
+      <HintPath>..\packages\rda.SocketsForPCL.1.2.2\lib\net45\Sockets.Plugin.dll</HintPath>
+    </Reference>
+    <Reference Include="Sockets.Plugin.Abstractions">
+      <HintPath>..\packages\rda.SocketsForPCL.1.2.2\lib\net45\Sockets.Plugin.Abstractions.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -94,6 +100,26 @@
     <ProjectReference Include="..\DavinciInc.FtpServer.FileSystem.SSH\DavinciInc.FtpServer.FileSystem.SSH.csproj">
       <Project>{ef9297cf-14da-43e1-acd8-d346e575a699}</Project>
       <Name>DavinciInc.FtpServer.FileSystem.SSH</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FubarDev.FtpServer.AccountManagement\FubarDev.FtpServer.AccountManagement.csproj">
+      <Project>{2530aefe-ce85-444e-9868-58be478aefd1}</Project>
+      <Name>FubarDev.FtpServer.AccountManagement</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FubarDev.FtpServer.AuthTls\FubarDev.FtpServer.AuthTls.csproj">
+      <Project>{a5c36c6d-be99-44c5-870a-23fd6b76e839}</Project>
+      <Name>FubarDev.FtpServer.AuthTls</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FubarDev.FtpServer.FileSystem\FubarDev.FtpServer.FileSystem.csproj">
+      <Project>{6da350b9-3b5a-49e3-bbcc-cecc140cea6b}</Project>
+      <Name>FubarDev.FtpServer.FileSystem</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\FubarDev.FtpServer\FubarDev.FtpServer.csproj">
+      <Project>{01ebbf94-7469-43a0-a618-07fb734b163f}</Project>
+      <Name>FubarDev.FtpServer</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\TestFtpServer\TestFtpServer.csproj">
+      <Project>{4dfc0694-0212-491c-a102-38203a74b09f}</Project>
+      <Name>TestFtpServer</Name>
     </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

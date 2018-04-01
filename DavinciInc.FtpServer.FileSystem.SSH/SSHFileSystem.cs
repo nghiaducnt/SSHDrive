@@ -28,21 +28,13 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// </summary>
         /// <param name="rootPath">The path to use as root</param>
         /// <param name="allowNonEmptyDirectoryDelete">Allow deletion of non-empty directories?</param>
-        public SSHFileSystem(string rootPath, bool allowNonEmptyDirectoryDelete)
-            : this(rootPath, allowNonEmptyDirectoryDelete, DefaultStreamBufferSize)
-        {
-        }
-
-        /// <summary>
-        /// Initializes a new instance of the <see cref="DotNetFileSystem"/> class.
-        /// </summary>
-        /// <param name="rootPath">The path to use as root</param>
-        /// <param name="allowNonEmptyDirectoryDelete">Allow deletion of non-empty directories?</param>
         /// <param name="streamBufferSize">Buffer size to be used in async IO methods</param>
-        public SSHFileSystem(string rootPath, bool allowNonEmptyDirectoryDelete, int streamBufferSize)
+        public SSHFileSystem(SSHCmdProvider client, string rootPath, bool allowNonEmptyDirectoryDelete, int streamBufferSize)
         {
             FileSystemEntryComparer = StringComparer.OrdinalIgnoreCase;
-            Root = new SSHDirectoryEntry(this, Directory.CreateDirectory(rootPath), true);
+            if (rootPath == null || rootPath.Length == 0)
+                rootPath = client._rootPath;
+            Root = new SSHDirectoryEntry(client, this, rootPath, true);
             SupportsNonEmptyDirectoryDelete = allowNonEmptyDirectoryDelete;
             _streamBufferSize = streamBufferSize;
         }
@@ -63,25 +55,10 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public Task<IReadOnlyList<IUnixFileSystemEntry>> GetEntriesAsync(IUnixDirectoryEntry directoryEntry, CancellationToken cancellationToken)
         {
             var result = new List<IUnixFileSystemEntry>();
-            DirectoryInfo dir = new DirectoryInfo("c:\\");
-            result.Add(new SSHDirectoryEntry(this, dir, false));
-            return Task.FromResult<IReadOnlyList<IUnixFileSystemEntry>>(result);
-            var searchDirInfo = ((SSHDirectoryEntry)directoryEntry).Info;
-            foreach (var info in searchDirInfo.EnumerateFileSystemInfos())
+            var searchDirInfo = ((SSHDirectoryEntry)directoryEntry);
+            foreach (var info in searchDirInfo.EnumerateSSHFileSystemInfos())
             {
-                var dirInfo = info as DirectoryInfo;
-                if (dirInfo != null)
-                {
-                    result.Add(new SSHDirectoryEntry(this, dirInfo, false));
-                }
-                else
-                {
-                    var fileInfo = info as FileInfo;
-                    if (fileInfo != null)
-                    {
-                        result.Add(new SSHFileEntry(this, fileInfo));
-                    }
-                }
+                result.Add(info);
             }
             return Task.FromResult<IReadOnlyList<IUnixFileSystemEntry>>(result);
         }

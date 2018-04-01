@@ -15,6 +15,8 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 
         private readonly int _streamBufferSize;
 
+        private readonly SSHCmdProvider _client;
+
         /// <summary>
         /// Initializes a new instance of the <see cref="SSHFileSystemProvider"/> class.
         /// </summary>
@@ -22,6 +24,14 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         public SSHFileSystemProvider([NotNull] string rootPath)
             : this(rootPath, false)
         {
+            _rootPath = rootPath;
+        }
+
+        public SSHFileSystemProvider([NotNull] SSHCmdProvider client, [NotNull] string rootPath)
+            : this(rootPath, false)
+        {
+            _client = client;
+            _rootPath = rootPath;
         }
 
         /// <summary>
@@ -63,7 +73,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 path = Path.Combine(path, userId);
             }
 
-            return Task.FromResult<IUnixFileSystem>(new SSHFileSystem(path, AllowNonEmptyDirectoryDelete, _streamBufferSize));
+            return Task.FromResult<IUnixFileSystem>(new SSHFileSystem(this._client, path, AllowNonEmptyDirectoryDelete, _streamBufferSize));
         }
     }
 }
