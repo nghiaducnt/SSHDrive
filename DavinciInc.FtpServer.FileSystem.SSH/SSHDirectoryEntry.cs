@@ -16,6 +16,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
     {
         private SSHCmdProvider _sshCmd;
         private string _path;
+        private string _name;
         /// <summary>
         /// Initializes a new instance of the <see cref="SSHDirectoryEntry"/> class.
         /// </summary>
@@ -62,7 +63,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             IsValid = true;
             _path = path.Replace("\n", string.Empty).Replace("\r", string.Empty);
             string statString = _sshCmd.SSHGetStat(path);
-            Match match = Regex.Match(statString, @"File:\s\W([A-Za-z0-9\-\.\\\/\-_]+)\W");
+            Match match = Regex.Match(statString, @"File:\s\W.*/([A-Za-z0-9\-\.\\\/\-_]+)");
             //File field
             if (match.Success)
                 Name = match.Groups[1].Value;
@@ -199,6 +200,8 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             for(int i = 1; i < result.Length;i++)
             {
                 string str = result[i];
+                if (str.Length == 0)
+                    continue;
                 //check if this is directory or file
                 Match mat;
                 string name = "";

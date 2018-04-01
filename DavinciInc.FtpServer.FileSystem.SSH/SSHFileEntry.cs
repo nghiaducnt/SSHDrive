@@ -34,7 +34,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             IsValid = true;
             _path = path;
             string statString = _sshCmd.SSHGetStat(path);
-            Match match = Regex.Match(statString, @"File:\s\W([A-Za-z0-9\-\.\\\/\-_]+)\W");
+            Match match = Regex.Match(statString, @"File:\s\W.*/([A-Za-z0-9\-\.\\\/\-_]+)");
             //File field
             if (match.Success)
                 Name = match.Groups[1].Value;
