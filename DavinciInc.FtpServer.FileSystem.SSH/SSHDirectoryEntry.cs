@@ -14,9 +14,11 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     public class SSHDirectoryEntry: IUnixDirectoryEntry
     {
-        private SSHCmdProvider _sshCmd;
+        public SSHCmdProvider _sshCmd;
         private string _path;
-        private string _name;
+        public string FullName { get; }
+ 
+        
         /// <summary>
         /// Initializes a new instance of the <see cref="SSHDirectoryEntry"/> class.
         /// </summary>
@@ -40,6 +42,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             _sshCmd = sshCmd;
             FileSystem = fileSystem;
             _path = rootPath.Replace("\n", string.Empty).Replace("\r", string.Empty);
+            FullName = _path;
             var accessMode = new GenericAccessMode(true, true, true);
             Permissions = new GenericUnixPermissions(accessMode, accessMode, accessMode);
             IsRoot = isRoot;
@@ -57,10 +60,11 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// Change: 2014-09-15 17:54:41.000000000 -0400
         /// </summary>
         /// <param name="statString"></param>
-        public SSHDirectoryEntry([NotNull] SSHCmdProvider sshCmd, string path)
+        public SSHDirectoryEntry([NotNull] SSHCmdProvider sshCmd, SSHFileSystem fileSystem, string path)
         {
             _sshCmd = sshCmd;
             IsValid = true;
+            this.FileSystem = fileSystem;
             _path = path.Replace("\n", string.Empty).Replace("\r", string.Empty);
             string statString = _sshCmd.SSHGetStat(path);
             Match match = Regex.Match(statString, @"File:\s\W.*/([A-Za-z0-9\-\.\\\/\-_]+)");
@@ -189,7 +193,22 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             ret += "\nGroup: " + this.Group;
             return ret;
         }
-
+        public static bool Exists(SSHCmdProvider sshCmd, string path)
+        {
+            string strStats = sshCmd.SSHGetStat(path);
+            Match mat = Regex.Match(strStats, @"stat: cannot.*: No such");
+            if (mat.Success)
+                return false;
+            //Check for Directory
+            mat = Regex.Match(strStats, @"Size:.*Blocks:.*IO.*Block:.*[0-9]+\s+([a-zA-Z]+)");
+            if (mat.Success)
+                if (String.Compare(mat.Groups[1].Value.ToLower(), 0, "directory", 0, "directory".Length) == 0)
+                {
+                    return true;
+                }
+                
+            return false;
+        }
         public IEnumerable<IUnixFileSystemEntry> EnumerateSSHFileSystemInfos()
         {
             //list all sub directories/files belong to this current directory
@@ -212,12 +231,12 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 if (mat.Success)
                 {
                     //this is directory
-                    SSHDirectoryEntry dir = new SSHDirectoryEntry(this._sshCmd, this._path + "/" + name);
+                    SSHDirectoryEntry dir = new SSHDirectoryEntry(this._sshCmd, (SSHFileSystem)this.FileSystem, this._path + "/" + name);
                     ret.Add(dir);
                 } else
                 {
                     //this is file
-                    SSHFileEntry file = new SSHFileEntry(this._sshCmd, this._path + "/" + name);
+                    SSHFileEntry file = new SSHFileEntry(this._sshCmd, (SSHFileSystem)FileSystem, this._path + "/" + name);
                     ret.Add(file);
                 }
             }

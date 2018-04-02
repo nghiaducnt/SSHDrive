@@ -236,6 +236,7 @@ namespace FubarDev.FtpServer
         {
             _cancellationTokenSource.Cancel(true);
             _listenerTaskEvent.Set();
+            while (BackgroundTransferWorker.HasData) ;
             Stopped = true;
         }
 

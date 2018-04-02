@@ -123,17 +123,18 @@ namespace SSHDriveApp
                     
                     ftpServer.Start();
                     while (_stop == false) ;
-
-                        // Stop the FTP server
-                        ftpServer.Stop();
+                    this._client.Disconnect();
+                    // Stop the FTP server
+                    ftpServer.Stop();
                 }
                 catch (Exception ex)
                 {
                     log?.Error(ex, "Error during main FTP server loop");
+                    this._client.Disconnect();
                 }
                 finally
                 {
-                    this._client.Disconnect();
+                    
                 }
             }
         }

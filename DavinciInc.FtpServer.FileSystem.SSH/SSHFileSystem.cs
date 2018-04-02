@@ -63,10 +63,23 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             return Task.FromResult<IReadOnlyList<IUnixFileSystemEntry>>(result);
         }
 
+        public static string PathCombine(string str, string str1)
+        {
+            return str + "/" + str1;
+        }
         /// <inheritdoc/>
         public Task<IUnixFileSystemEntry> GetEntryByNameAsync(IUnixDirectoryEntry directoryEntry, string name, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this GetEntryByNameAsync");
+            SSHDirectoryEntry searchDirInfo = (SSHDirectoryEntry)directoryEntry;
+            var fullPath = SSHFileSystem.PathCombine(searchDirInfo.FullName, name);
+            IUnixFileSystemEntry result;
+            if (SSHDirectoryEntry.Exists(searchDirInfo._sshCmd, fullPath))
+                result = new SSHDirectoryEntry(searchDirInfo._sshCmd, this, fullPath, false);
+            else if (SSHFileEntry.Exists(searchDirInfo._sshCmd, fullPath))
+                result = new SSHFileEntry(searchDirInfo._sshCmd, this, fullPath);
+            else
+                result = null;
+            return Task.FromResult(result);
         }
 
         /// <inheritdoc/>

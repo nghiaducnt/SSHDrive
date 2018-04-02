@@ -28,7 +28,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             /* get the current home of user */
             _rootPath = SSHGetHome();
             _currentPath = _rootPath;
-            _currentDir = new SSHDirectoryEntry(this, _currentPath);
+            _currentDir = new SSHDirectoryEntry(this, null, _currentPath);
             _currentDir.EnumerateSSHFileSystemInfos();
         }
         public SSHCmdProvider([NotNull] SshClient client, [NotNull] string currentPath)
@@ -40,7 +40,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 _currentPath = currentPath;
             else
                 _rootPath = _rootPath;
-            _currentDir = new SSHDirectoryEntry(this, _currentPath);
+            _currentDir = new SSHDirectoryEntry(this, null, _currentPath);
             _currentDir.EnumerateSSHFileSystemInfos();
         }
         #region Internal command
@@ -101,6 +101,8 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 throw ex;
             }
         }
+
+
 
         public override string ToString()
         {

@@ -28,11 +28,12 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             Permissions = new GenericUnixPermissions(accessMode, accessMode, accessMode);
         }
 
-        public SSHFileEntry([NotNull] SSHCmdProvider sshCmd, string path)
+        public SSHFileEntry([NotNull] SSHCmdProvider sshCmd, [NotNull] SSHFileSystem fileSystem, string path)
         {
             _sshCmd = sshCmd;
             IsValid = true;
             _path = path;
+            FileSystem = fileSystem;
             string statString = _sshCmd.SSHGetStat(path);
             Match match = Regex.Match(statString, @"File:\s\W.*/([A-Za-z0-9\-\.\\\/\-_]+)");
             //File field
@@ -141,7 +142,24 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <inheritdoc/>
         public long Size { get; }
         public bool IsValid { get; }
+        public static bool Exists(SSHCmdProvider sshCmd, string path)
+        {
+            string strStats = sshCmd.SSHGetStat(path);
+            Match mat = Regex.Match(strStats, @"stat: cannot.*: No such");
+            if (mat.Success)
+                return false;
+            //Check for Directory
+            mat = Regex.Match(strStats, @"Size:.*Blocks:.*IO.*Block:.*[0-9]+\s+([a-zA-Z]+)");
+            if (mat.Success)
+                if (String.Compare(mat.Groups[1].Value.ToLower(), 0, "directory", 0, "directory".Length) == 0)
+                {
+                    return false;
+                }
+                else
+                    return true;
 
+            return false;
+        }
         public override string ToString()
         {
             string ret;
