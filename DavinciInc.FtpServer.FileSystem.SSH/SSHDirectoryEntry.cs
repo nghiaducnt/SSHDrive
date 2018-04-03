@@ -138,6 +138,12 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             
         }
 
+        public static bool MoveTo(SSHDirectoryEntry sourceDirEntry, string targetName)
+        {
+            string ret = sourceDirEntry._sshCmd.SSHMoveTo(sourceDirEntry.FullName, targetName);
+            return true;
+        }
+
 
         /// <summary>
         /// Gets the underlying <see cref="DirectoryInfo"/>

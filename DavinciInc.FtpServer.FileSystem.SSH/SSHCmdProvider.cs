@@ -80,6 +80,20 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 throw ex;
             }
         }
+
+        public string SSHMoveTo(string abs_path_source, string abs_path_dest)
+        {
+            try
+            {
+                SshCommand cmd;
+                cmd = _client.RunCommand("mv " + abs_path_source + " "  + abs_path_dest);
+                return cmd.Result;
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
         /// <summary>
         /// List from path
         /// </summary>

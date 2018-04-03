@@ -13,6 +13,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
     {
         private SSHCmdProvider _sshCmd;
         private string _path;
+        public string FullName { get;  }
         /// <summary>
         /// Initializes a new instance of the <see cref="SSHFileEntry"/> class.
         /// </summary>
@@ -33,6 +34,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             _sshCmd = sshCmd;
             IsValid = true;
             _path = path;
+            FullName = path;
             FileSystem = fileSystem;
             string statString = _sshCmd.SSHGetStat(path);
             Match match = Regex.Match(statString, @"File:\s\W.*/([A-Za-z0-9\-\.\\\/\-_]+)");
@@ -159,6 +161,11 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                     return true;
 
             return false;
+        }
+        public static bool MoveTo(SSHFileEntry source, string destPath)
+        {
+            string ret = source._sshCmd.SSHMoveTo(source.FullName, destPath);
+            return true;
         }
         public override string ToString()
         {

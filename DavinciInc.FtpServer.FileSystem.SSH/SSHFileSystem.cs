@@ -85,7 +85,19 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <inheritdoc/>
         public Task<IUnixFileSystemEntry> MoveAsync(IUnixDirectoryEntry parent, IUnixFileSystemEntry source, IUnixDirectoryEntry target, string fileName, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this MoveAsync");
+            var targetEntry = (SSHDirectoryEntry)target;
+            var targetName = SSHFileSystem.PathCombine(targetEntry.FullName, fileName);
+
+            var sourceFileEntry = source as SSHFileEntry;
+            if (sourceFileEntry != null)
+            {
+                SSHFileEntry.MoveTo(sourceFileEntry, targetName);
+                return Task.FromResult<IUnixFileSystemEntry>(new SSHFileEntry(targetEntry._sshCmd, this, targetName));
+            }
+
+            var sourceDirEntry = (SSHDirectoryEntry)source;
+            SSHDirectoryEntry.MoveTo(sourceDirEntry, targetName);
+            return Task.FromResult<IUnixFileSystemEntry>(new SSHDirectoryEntry(targetEntry._sshCmd, this, targetName, false));
         }
 
         /// <inheritdoc/>
