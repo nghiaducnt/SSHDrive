@@ -116,6 +116,26 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             }
         }
 
+        public string SSHDeleteAll(string path)
+        {
+            try
+            {
+                SshCommand cmd;
+                if (path != null && path.Length > 0)
+                {
+                    cmd = _client.RunCommand("rm -rf " + path);
+                    return cmd.Result;
+                }
+                    
+                return "Error";
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
 
 
         public override string ToString()
@@ -123,6 +143,26 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             string ret = "";
             ret = _currentDir.ToString();
             return ret;
+        }
+
+        public string CreateSubdirectory(string newDirPath)
+        {
+            try
+            {
+                SshCommand cmd;
+                if (newDirPath != null && newDirPath.Length > 0)
+                {
+                    cmd = _client.RunCommand("mkdir " + newDirPath);
+                    return cmd.Result;
+                }
+
+                return "Error";
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
         }
 
         #endregion

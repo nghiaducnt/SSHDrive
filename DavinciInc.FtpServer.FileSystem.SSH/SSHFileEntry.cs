@@ -11,7 +11,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     class SSHFileEntry : IUnixFileEntry
     {
-        private SSHCmdProvider _sshCmd;
+        public SSHCmdProvider _sshCmd;
         private string _path;
         public string FullName { get;  }
         /// <summary>

@@ -103,13 +103,26 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <inheritdoc/>
         public Task UnlinkAsync(IUnixFileSystemEntry entry, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this UnlinkAsync");
+            var dirEntry = entry as SSHDirectoryEntry;
+            if (dirEntry != null)
+            {
+                dirEntry._sshCmd.SSHDeleteAll(dirEntry.FullName);
+            }
+            else
+            {
+                var fileEntry = (SSHFileEntry)entry;
+                fileEntry._sshCmd.SSHDeleteAll(fileEntry.FullName);
+            }
+            return Task.FromResult(0);
         }
 
         /// <inheritdoc/>
         public Task<IUnixDirectoryEntry> CreateDirectoryAsync(IUnixDirectoryEntry targetDirectory, string directoryName, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this CreateDirectoryAsync");
+            var targetEntry = (SSHDirectoryEntry)targetDirectory;
+            string newDirPath = SSHFileSystem.PathCombine(targetEntry.FullName, directoryName);
+            var newDirInfo = targetEntry._sshCmd.CreateSubdirectory(newDirPath);
+            return Task.FromResult<IUnixDirectoryEntry>(new SSHDirectoryEntry(targetEntry._sshCmd, this, newDirPath, false));
         }
 
         /// <inheritdoc/>
