@@ -128,7 +128,11 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
         /// <inheritdoc/>
         public Task<Stream> OpenReadAsync(IUnixFileEntry fileEntry, long startPosition, CancellationToken cancellationToken)
         {
-            throw new ArgumentException("Please implement this OpenReadAsync");
+            var fileInfo = ((SSHFileEntry)fileEntry);
+            var input = fileInfo.OpenRead(startPosition, 4096);
+            if (startPosition != 0)
+                input.Seek(startPosition, SeekOrigin.Begin);
+            return Task.FromResult<Stream>(input);
         }
 
         /// <inheritdoc/>

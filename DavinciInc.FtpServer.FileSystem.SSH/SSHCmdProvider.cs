@@ -10,7 +10,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     public class SSHCmdProvider
     {
-
+        public static int XXDOctetPerLine = 32;
         public string _currentPath;
         SshClient _client;
 
@@ -153,6 +153,33 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
                 if (newDirPath != null && newDirPath.Length > 0)
                 {
                     cmd = _client.RunCommand("mkdir " + newDirPath);
+                    return cmd.Result;
+                }
+
+                return "Error";
+
+            }
+            catch (Exception ex)
+            {
+                throw ex;
+            }
+        }
+
+        /// <summary>
+        /// Return a XXD octet stream with 32 octets per line
+        /// </summary>
+        /// <param name="fullName"></param>
+        /// <param name="start"></param>
+        /// <param name="length"></param>
+        /// <returns></returns>
+        public string SSHXXD(string fullName, long start, long length)
+        {
+            try
+            {
+                SshCommand cmd;
+                if (fullName != null && fullName.Length > 0)
+                {
+                    cmd = _client.RunCommand("xxd -ps -c " + SSHCmdProvider.XXDOctetPerLine.ToString() + " -s +" + start.ToString() + " -l " + length.ToString() + " " + fullName);
                     return cmd.Result;
                 }
 

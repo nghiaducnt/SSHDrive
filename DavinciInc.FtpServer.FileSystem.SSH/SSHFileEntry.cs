@@ -11,6 +11,7 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
 {
     class SSHFileEntry : IUnixFileEntry
     {
+        
         public SSHCmdProvider _sshCmd;
         private string _path;
         public string FullName { get;  }
@@ -167,6 +168,33 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             string ret = source._sshCmd.SSHMoveTo(source.FullName, destPath);
             return true;
         }
+
+        public Stream OpenRead(long start, long length)
+        {
+            Stream streamRead = new MemoryStream((int)length);
+            string ret = _sshCmd.SSHXXD(FullName, start, length);
+            //extract data from ret
+            string[] result = Regex.Split(ret, "\r\n|\r|\n", RegexOptions.None);
+            for (int i = 0; i < result.Length; i++)
+            {
+                
+                string str = result[i];
+                if (str.Length == 0)
+                    continue;
+                int startIdx = 0;
+                for (int j = 0; j < SSHCmdProvider.XXDOctetPerLine && startIdx < str.Length; j++, startIdx+=2)
+                {
+                    string subStr = str.Substring(startIdx, 2);
+                    byte value;
+                    if (byte.TryParse(subStr, System.Globalization.NumberStyles.HexNumber, null, out value))
+                        streamRead.WriteByte(value);
+                }
+                
+            }
+            streamRead.Seek(0, SeekOrigin.Begin);
+            return streamRead;
+        }
+
         public override string ToString()
         {
             string ret;
