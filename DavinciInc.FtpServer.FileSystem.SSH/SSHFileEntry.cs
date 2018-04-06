@@ -169,28 +169,42 @@ namespace DavinciInc.FtpServer.FileSystem.SSH
             return true;
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="start"></param>
+        /// <param name="length">Limit each byte of read action</param>
+        /// <returns></returns>
         public Stream OpenRead(long start, long length)
         {
-            Stream streamRead = new MemoryStream((int)length);
-            string ret = _sshCmd.SSHXXD(FullName, start, length);
-            //extract data from ret
-            string[] result = Regex.Split(ret, "\r\n|\r|\n", RegexOptions.None);
-            for (int i = 0; i < result.Length; i++)
+            Stream streamRead = new MemoryStream();
+            bool _bFinish = false;
+            long _lStart = start;
+            while(_bFinish == false)
             {
-                
-                string str = result[i];
-                if (str.Length == 0)
-                    continue;
-                int startIdx = 0;
-                for (int j = 0; j < SSHCmdProvider.XXDOctetPerLine && startIdx < str.Length; j++, startIdx+=2)
+                string ret = _sshCmd.SSHXXD(FullName, _lStart, length);
+                _bFinish = true;
+                //extract data from ret
+                string[] result = Regex.Split(ret, "\r\n|\r|\n", RegexOptions.None);
+                for (int i = 0; i < result.Length; i++)
                 {
-                    string subStr = str.Substring(startIdx, 2);
-                    byte value;
-                    if (byte.TryParse(subStr, System.Globalization.NumberStyles.HexNumber, null, out value))
-                        streamRead.WriteByte(value);
+                    string str = result[i];
+                    if (str.Length == 0)
+                        continue;
+                    _bFinish = false;
+                    int startIdx = 0;
+                    for (int j = 0; j < SSHCmdProvider.XXDOctetPerLine && startIdx < str.Length; j++, startIdx += 2)
+                    {
+                        byte value;
+                        string subStr = str.Substring(startIdx, 2);
+                        _lStart++;
+                        if (byte.TryParse(subStr, System.Globalization.NumberStyles.HexNumber, null, out value))
+                            streamRead.WriteByte(value);
+                    }
+
                 }
-                
             }
+            
             streamRead.Seek(0, SeekOrigin.Begin);
             return streamRead;
         }
